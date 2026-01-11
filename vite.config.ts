@@ -1,54 +1,8 @@
-name: Deploy Vue Portfolio to GitHub Pages
+import { defineConfig } from 'vite';
+import vue from '@vitejs/plugin-vue';
 
-on:
-  push:
-    branches:
-      - main
-
-jobs:
-  build-and-deploy:
-    runs-on: ubuntu-latest
-
-    steps:
-      # 1️⃣ Checkout repo
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
-      # 2️⃣ Setup Node.js
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '20'
-
-      # 3️⃣ Install dependencies
-      - name: Install dependencies
-        run: npm ci
-
-      # 4️⃣ Build project
-      - name: Build project
-        run: npm run build
-
-      # 5️⃣ Generate sitemap.xml from Vue routes
-      - name: Generate sitemap.xml
-        run: |
-          node scripts/generate-sitemap.js
-          cp sitemap.xml dist/sitemap.xml
-
-      # 6️⃣ Copy robots.txt
-      - name: Copy robots.txt
-        run: cp public/robots.txt dist/robots.txt
-
-      # 7️⃣ Deploy to GitHub Pages
-      - name: Deploy to GitHub Pages
-        env:
-          PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
-        run: |
-          cd dist
-          git init
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add .
-          git commit -m "Deploy Vue portfolio"
-          git branch -M gh-pages
-          git remote add origin https://x-access-token:$PAT_TOKEN@github.com/Dodikunaedi16/portfolio-UI-UX.git
-          git push -f origin gh-pages
+// https://vitejs.dev/config/
+export default defineConfig({
+  plugins: [vue()],
+  base: '/portfolio-UI-UX/', // ganti sesuai nama repo GitHub Pages
+});
